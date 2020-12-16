@@ -1,6 +1,7 @@
 import React from "react";
 import TextField from "material-ui/TextField";
 import RaisedButton from "material-ui/RaisedButton";
+import db from "./firebase";
 
 export default class Form extends React.Component {
   state = {
@@ -13,13 +14,13 @@ export default class Form extends React.Component {
     email: "",
     emailError: "",
     password: "",
-    passwordError: ""
+    passwordError: "",
   };
 
-  change = e => {
+  change = (e) => {
     // this.props.onChange({ [e.target.name]: e.target.value });
     this.setState({
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -30,7 +31,7 @@ export default class Form extends React.Component {
       lastNameError: "",
       usernameError: "",
       emailError: "",
-      passwordError: ""
+      passwordError: "",
     };
 
     if (this.state.username.length < 5) {
@@ -45,13 +46,22 @@ export default class Form extends React.Component {
 
     this.setState({
       ...this.state,
-      ...errors
+      ...errors,
     });
 
     return isError;
   };
 
-  onSubmit = e => {
+  addToDatabase = (e) => {
+    e.preventDefault();
+    db.collection("user-info").add({
+      Name: this.state.firstName + " " + this.state.lastName,
+      Username: this.state.username,
+      Email: this.state.email,
+    });
+  };
+
+  onSubmit = (e) => {
     e.preventDefault();
     const err = this.validate();
     if (!err) {
@@ -67,7 +77,7 @@ export default class Form extends React.Component {
         email: "",
         emailError: "",
         password: "",
-        passwordError: ""
+        passwordError: "",
       });
     }
   };
@@ -80,7 +90,7 @@ export default class Form extends React.Component {
           hintText="First name"
           floatingLabelText="First name"
           value={this.state.firstName}
-          onChange={e => this.change(e)}
+          onChange={(e) => this.change(e)}
           errorText={this.state.firstNameError}
           floatingLabelFixed
         />
@@ -90,7 +100,7 @@ export default class Form extends React.Component {
           hintText="Last Name"
           floatingLabelText="Last Name"
           value={this.state.lastName}
-          onChange={e => this.change(e)}
+          onChange={(e) => this.change(e)}
           errorText={this.state.lastNameError}
           floatingLabelFixed
         />
@@ -100,7 +110,7 @@ export default class Form extends React.Component {
           hintText="Username"
           floatingLabelText="Username"
           value={this.state.username}
-          onChange={e => this.change(e)}
+          onChange={(e) => this.change(e)}
           errorText={this.state.usernameError}
           floatingLabelFixed
         />
@@ -110,7 +120,7 @@ export default class Form extends React.Component {
           hintText="Email"
           floatingLabelText="Email"
           value={this.state.email}
-          onChange={e => this.change(e)}
+          onChange={(e) => this.change(e)}
           errorText={this.state.emailError}
           floatingLabelFixed
         />
@@ -120,13 +130,18 @@ export default class Form extends React.Component {
           hintText="Password"
           floatingLabelText="Password"
           value={this.state.password}
-          onChange={e => this.change(e)}
+          onChange={(e) => this.change(e)}
           errorText={this.state.passwordError}
           type="password"
           floatingLabelFixed
         />
         <br />
-        <RaisedButton label="Submit" onClick={e => this.onSubmit(e)} primary />
+        <RaisedButton
+          label="Submit"
+          onClick={(e) => this.onSubmit(e)}
+          primary
+        />
+        <RaisedButton label="add" onClick={(e) => this.addToDatabase(e)} />
       </form>
     );
   }
